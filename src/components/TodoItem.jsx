@@ -71,7 +71,7 @@ function TodoItem({ task, onToggle, onDelete, onEdit }) {
           style={{
             flex: 1,
             textDecoration: task.completed ? "line-through" : "none",
-            color: task.completed ? "#999" : "#333",
+            color: "inherit",
             cursor: "pointer",
             padding: "4px 8px",
             outline: "none",

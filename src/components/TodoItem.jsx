@@ -1,4 +1,37 @@
-function TodoItem({ task, onToggle, onDelete }) {
+import { useState } from "react";
+
+function TodoItem({ task, onToggle, onDelete, onEdit }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editText, setEditText] = useState(task.text);
+
+  const handleDoubleClick = () => {
+    setIsEditing(true);
+    setEditText(task.text);
+  };
+
+  const handleSave = (e) => {
+    if (editText.trim()) {
+      onEdit(task.id, editText.trim());
+      setIsEditing(false);
+    } else {
+      setIsEditing(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setEditText(task.text);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSave();
+    } else if (e.key === "Escape") {
+      handleCancel();
+    }
+  };
+
   return (
     <li
       style={{
@@ -14,15 +47,40 @@ function TodoItem({ task, onToggle, onDelete }) {
         checked={task.completed}
         onChange={() => onToggle(task.id)}
       />
-      <span
-        style={{
-          flex: 1,
-          textDecoration: task.completed ? "line-through" : "none",
-          color: task.completed ? "#999" : "#333",
-        }}
-      >
-        {task.text}
-      </span>
+
+      {isEditing ? (
+        <input
+          type="text"
+          value={editText}
+          onChange={(e) => setEditText(e.target.value)}
+          onBlur={handleSave}
+          onKeyDown={handleKeyDown}
+          autoFocus
+          style={{
+            flex: 1,
+            padding: "4px 8px",
+            fontSize: "16px",
+            borderRadius: "4px",
+            border: "none",
+            outline: "none",
+          }}
+        />
+      ) : (
+        <span
+          onDoubleClick={handleDoubleClick}
+          style={{
+            flex: 1,
+            textDecoration: task.completed ? "line-through" : "none",
+            color: task.completed ? "#999" : "#333",
+            cursor: "pointer",
+            padding: "4px 8px",
+            outline: "none",
+          }}
+        >
+          {task.text}
+        </span>
+      )}
+
       <button
         onClick={() => onDelete(task.id)}
         style={{
